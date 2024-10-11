@@ -3,12 +3,12 @@ The package for CRUD-operations for Task Tracker App
 */
 package crud
 
-func Add(descriptrion []byte) error {}
+func (task *Task) Add(descriptrion []byte) error {}
 
-func Update(id int, new_descriptrion []byte) error {}
+func (task *Task) Update(new_descriptrion []byte) error {}
 
-func Delete(id int) error {}
+func (task *Task) Delete(id int) error {}
 
-func Mark(id int, status []byte) error {}
+func (task *Task) Mark(id int, status []byte) error {}
 
-func List(id int, status Status) error {}
+func List(tasks *[]Task, status Status) error {}
