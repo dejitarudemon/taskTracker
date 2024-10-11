@@ -12,6 +12,7 @@ func (task *Task) Add(descriptrion []byte) error {
 	if err != nil {
 		return &TaskError{id: 0, msg: "No data file"}
 	}
+	defer file.Close()
 }
 
 func (task *Task) Update(new_descriptrion []byte) error {}
