@@ -14,3 +14,9 @@ type Task struct {
 }
 
 type Status []byte
+
+const (
+	Done       = "done"
+	InProgress = "in-progress"
+	ToDo       = "todo"
+)
