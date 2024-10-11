@@ -7,7 +7,7 @@ import "fmt"
 
 type TaskError struct {
 	id  int
-	msg []byte
+	msg string
 }
 
 func (err *TaskError) Error() string {
