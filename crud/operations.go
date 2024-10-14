@@ -46,8 +46,8 @@ func Add(descriptrion string) error {
 		Id:          last_id + 1,
 		Description: descriptrion,
 		Status:      ToDo,
-		CreatedAt:   time.Now().Format("2006-01-02 03:04:05"),
-		UpdatedAt:   time.Now().Format("2006-01-02 03:04:05"),
+		CreatedAt:   time.Now().Format("2006-01-02 15:04:05"),
+		UpdatedAt:   time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	tasks = append(tasks, task)
@@ -61,14 +61,14 @@ func Update(task_id int, new_descriptrion string) error {
 		return err
 	}
 
-	task := find(&tasks, task_id)
-	if task == nil {
-		return errors.New("NO TASK WITH THE ID")
+	for i := range tasks {
+		if tasks[i].Id == task_id {
+			tasks[i].Description = new_descriptrion
+			tasks[i].UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+			return dump(&tasks, FILEDATA)
+		}
 	}
-
-	task.Description = new_descriptrion
-	task.UpdatedAt = time.Now().Format("2006-01-02 03:04:05")
-	return dump(&tasks, FILEDATA)
+	return errors.New("NO TASK WITH THE ID")
 }
 
 func Delete(task_id int) error {
@@ -77,18 +77,20 @@ func Delete(task_id int) error {
 		return err
 	}
 
-	task := find(&tasks, task_id)
-	if task == nil {
+	if len(tasks) == 0 {
 		return errors.New("NO TASK WITH THE ID")
 	}
 
 	new_tasks := make(Tasks, 0, len(tasks)-1)
 	for i := range tasks {
-		if tasks[i].Id != task.Id {
+		if tasks[i].Id != task_id {
 			new_tasks = append(new_tasks, tasks[i])
 		}
 	}
 
+	if len(new_tasks) == len(tasks) {
+		return errors.New("NO TASK WITH THE ID")
+	}
 	return dump(&new_tasks, FILEDATA)
 }
 
@@ -98,13 +100,14 @@ func Mark(task_id int, status string) error {
 		return err
 	}
 
-	task := find(&tasks, task_id)
-	if task == nil {
-		return errors.New("NO TASK WITH THE ID")
+	for i := range tasks {
+		if tasks[i].Id == task_id {
+			tasks[i].UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
+			tasks[i].Status = status
+			return dump(&tasks, FILEDATA)
+		}
 	}
-
-	task.Status = status
-	return dump(&tasks, FILEDATA)
+	return errors.New("NO TASK WITH THE ID")
 }
 
 func List(status *string) (Tasks, error) {
@@ -153,15 +156,6 @@ func dump(tasks *Tasks, filepath string) error {
 
 	if err := os.WriteFile(filepath, contentJsoned, 0664); err != nil {
 		return err
-	}
-	return nil
-}
-
-func find(tasks *Tasks, task_id int) *Task {
-	for _, task := range *tasks {
-		if task.Id == task_id {
-			return &task
-		}
 	}
 	return nil
 }
