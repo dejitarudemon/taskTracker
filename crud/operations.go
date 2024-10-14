@@ -100,13 +100,14 @@ func Mark(task_id int, status string) error {
 		return err
 	}
 
-	task := find(&tasks, task_id)
-	if task == nil {
-		return errors.New("NO TASK WITH THE ID")
+	for i := range tasks {
+		if tasks[i].Id == task_id {
+			tasks[i].UpdatedAt = time.Now().Format("2006-01-02 03:04:05")
+			tasks[i].Status = status
+			return dump(&tasks, FILEDATA)
+		}
 	}
-
-	task.Status = status
-	return dump(&tasks, FILEDATA)
+	return errors.New("NO TASK WITH THE ID")
 }
 
 func List(status *string) (Tasks, error) {
