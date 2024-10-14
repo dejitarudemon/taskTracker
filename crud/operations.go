@@ -77,18 +77,16 @@ func Delete(task_id int) error {
 		return err
 	}
 
-	task := find(&tasks, task_id)
-	if task == nil {
-		return errors.New("NO TASK WITH THE ID")
-	}
-
 	new_tasks := make(Tasks, 0, len(tasks)-1)
 	for i := range tasks {
-		if tasks[i].Id != task.Id {
+		if tasks[i].Id != task_id {
 			new_tasks = append(new_tasks, tasks[i])
 		}
 	}
 
+	if len(new_tasks) == len(tasks) {
+		return errors.New("NO TASK WITH THE ID")
+	}
 	return dump(&new_tasks, FILEDATA)
 }
 
