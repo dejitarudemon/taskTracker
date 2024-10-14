@@ -160,15 +160,6 @@ func dump(tasks *Tasks, filepath string) error {
 	return nil
 }
 
-func find(tasks *Tasks, task_id int) *Task {
-	for _, task := range *tasks {
-		if task.Id == task_id {
-			return &task
-		}
-	}
-	return nil
-}
-
 func filter(tasks *Tasks, status *string) Tasks {
 	result := make(Tasks, 0, 1)
 
