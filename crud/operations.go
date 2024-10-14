@@ -45,14 +45,14 @@ func Update(task_id int, new_descriptrion []byte) error {
 		return err
 	}
 
-	for _, task := range tasks {
-		if task.id == task_id {
-			task.description = new_descriptrion
-			return dump(&tasks, FILEDATA)
-		}
+	task := find(&tasks, task_id)
+	if task == nil {
+		return errors.New("There is no task with the id")
 	}
 
-	return errors.New("There is no task with the id")
+	task.description = new_descriptrion
+	task.updatedAt = time.Now()
+	return dump(&tasks, FILEDATA)
 }
 
 func (task *Task) Delete(id int) error {}
@@ -100,6 +100,15 @@ func dump(tasks *[]Task, filepath string) error {
 
 	if _, err := file.Write(contentJsoned); err != nil {
 		return err
+	}
+	return nil
+}
+
+func find(tasks *[]Task, task_id int) *Task {
+	for _, task := range *tasks {
+		if task.id == task_id {
+			return &task
+		}
 	}
 	return nil
 }
