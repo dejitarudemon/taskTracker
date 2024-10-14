@@ -31,7 +31,21 @@ func (task *Task) Add(descriptrion []byte) error {
 	return dump(&tasks, FILEDATA)
 }
 
-func (task *Task) Update(new_descriptrion []byte) error {}
+func Update(task_id int, new_descriptrion []byte) error {
+	tasks, err := load(FILEDATA)
+	if err != nil {
+		return err
+	}
+
+	for _, task := range tasks {
+		if task.id == task_id {
+			task.description = new_descriptrion
+			return dump(&tasks, FILEDATA)
+		}
+	}
+
+	return errors.New("There is no task with the id")
+}
 
 func (task *Task) Delete(id int) error {}
 
