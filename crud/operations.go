@@ -13,6 +13,21 @@ import (
 
 const FILEDATA = "./tasks.json"
 
+func Init() error {
+	_, err := os.Stat(FILEDATA)
+
+	if err == nil {
+		return nil
+	}
+
+	if errors.Is(err, os.ErrNotExist) {
+		_, err := os.Create(FILEDATA)
+		return err
+	}
+
+	return err
+}
+
 func Add(descriptrion string) error {
 	tasks, err := load(FILEDATA)
 	if err != nil {
