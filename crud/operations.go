@@ -105,7 +105,7 @@ func List(status *Status) ([]Task, error) {
 }
 
 func load(filepath string) ([]Task, error) {
-	file, err := os.Open(FILEDATA)
+	file, err := os.Open(filepath)
 	if err != nil {
 		return []Task{}, err
 	}
@@ -117,7 +117,7 @@ func load(filepath string) ([]Task, error) {
 	}
 
 	if !json.Valid(content) {
-		return []Task{}, errors.New("Not Valid Structure")
+		return []Task{}, errors.New("NOT JSON-VALIDE")
 	}
 
 	var tasks []Task
@@ -130,7 +130,7 @@ func load(filepath string) ([]Task, error) {
 }
 
 func dump(tasks *[]Task, filepath string) error {
-	file, err := os.Open(FILEDATA)
+	file, err := os.Open(filepath)
 	if err != nil {
 		return err
 	}
