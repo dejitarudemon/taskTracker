@@ -13,24 +13,8 @@ import (
 const FILEDATA = "./tasks.json"
 
 func (task *Task) Add(descriptrion []byte) error {
-	file, err := os.Open(FILEDATA)
+	tasks, err := load(FILEDATA)
 	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	content, err := io.ReadAll(file)
-	if err != nil {
-		return err
-	}
-
-	if !json.Valid(content) {
-		return errors.New("Not Valid Structure")
-	}
-
-	var tasks []Task
-
-	if err := json.Unmarshal(content, &tasks); err != nil {
 		return err
 	}
 
@@ -44,15 +28,7 @@ func (task *Task) Add(descriptrion []byte) error {
 	task.id = last_id + 1
 	tasks = append(tasks, *task)
 
-	tasksJsoned, err := json.Marshal(tasks)
-	if err != nil {
-		return err
-	}
-
-	if _, err := file.Write(tasksJsoned); err != nil {
-		return err
-	}
-	return nil
+	return dump(&tasks, FILEDATA)
 }
 
 func (task *Task) Update(new_descriptrion []byte) error {}
@@ -62,3 +38,46 @@ func (task *Task) Delete(id int) error {}
 func (task *Task) Mark(id int, status []byte) error {}
 
 func List(tasks *[]Task, status Status) error {}
+
+func load(filepath string) ([]Task, error) {
+	file, err := os.Open(FILEDATA)
+	if err != nil {
+		return []Task{}, err
+	}
+	defer file.Close()
+
+	content, err := io.ReadAll(file)
+	if err != nil {
+		return []Task{}, err
+	}
+
+	if !json.Valid(content) {
+		return []Task{}, errors.New("Not Valid Structure")
+	}
+
+	var tasks []Task
+
+	if err := json.Unmarshal(content, &tasks); err != nil {
+		return []Task{}, err
+	}
+
+	return tasks, nil
+}
+
+func dump(tasks *[]Task, filepath string) error {
+	file, err := os.Open(FILEDATA)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+
+	contentJsoned, err := json.Marshal(tasks)
+	if err != nil {
+		return err
+	}
+
+	if _, err := file.Write(contentJsoned); err != nil {
+		return err
+	}
+	return nil
+}
