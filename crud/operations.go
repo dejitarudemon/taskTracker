@@ -76,7 +76,20 @@ func Delete(task_id int) error {
 	return dump(&new_tasks, FILEDATA)
 }
 
-func (task *Task) Mark(id int, status []byte) error {}
+func Mark(task_id int, status Status) error {
+	tasks, err := load(FILEDATA)
+	if err != nil {
+		return err
+	}
+
+	task := find(&tasks, task_id)
+	if task == nil {
+		return errors.New("There is no task with the id")
+	}
+
+	task.status = status
+	return dump(&tasks, FILEDATA)
+}
 
 func List(tasks *[]Task, status Status) error {}
 
