@@ -55,7 +55,26 @@ func Update(task_id int, new_descriptrion []byte) error {
 	return dump(&tasks, FILEDATA)
 }
 
-func (task *Task) Delete(id int) error {}
+func Delete(task_id int) error {
+	tasks, err := load(FILEDATA)
+	if err != nil {
+		return err
+	}
+
+	task := find(&tasks, task_id)
+	if task == nil {
+		return errors.New("There is no task with the id")
+	}
+
+	new_tasks := make([]Task, 0, len(tasks)-1)
+	for i, _ := range tasks {
+		if tasks[i].id != task.id {
+			new_tasks = append(new_tasks, tasks[i])
+		}
+	}
+
+	return dump(&new_tasks, FILEDATA)
+}
 
 func (task *Task) Mark(id int, status []byte) error {}
 
