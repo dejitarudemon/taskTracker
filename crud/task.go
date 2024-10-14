@@ -7,7 +7,7 @@ import "time"
 
 type Task struct {
 	id          int
-	description []byte
+	description string
 	status      Status
 	createdAt   time.Time
 	updatedAt   time.Time

@@ -13,7 +13,7 @@ import (
 
 const FILEDATA = "./tasks.json"
 
-func Add(descriptrion []byte) error {
+func Add(descriptrion string) error {
 	tasks, err := load(FILEDATA)
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func Add(descriptrion []byte) error {
 	return dump(&tasks, FILEDATA)
 }
 
-func Update(task_id int, new_descriptrion []byte) error {
+func Update(task_id int, new_descriptrion string) error {
 	tasks, err := load(FILEDATA)
 	if err != nil {
 		return err
