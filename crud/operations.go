@@ -67,7 +67,7 @@ func Delete(task_id int) error {
 	}
 
 	new_tasks := make([]Task, 0, len(tasks)-1)
-	for i, _ := range tasks {
+	for i := range tasks {
 		if tasks[i].id != task.id {
 			new_tasks = append(new_tasks, tasks[i])
 		}
