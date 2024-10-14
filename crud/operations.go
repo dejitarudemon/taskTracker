@@ -47,7 +47,7 @@ func Update(task_id int, new_descriptrion []byte) error {
 
 	task := find(&tasks, task_id)
 	if task == nil {
-		return errors.New("There is no task with the id")
+		return errors.New("NO TASK WITH THE ID")
 	}
 
 	task.description = new_descriptrion
@@ -63,7 +63,7 @@ func Delete(task_id int) error {
 
 	task := find(&tasks, task_id)
 	if task == nil {
-		return errors.New("There is no task with the id")
+		return errors.New("NO TASK WITH THE ID")
 	}
 
 	new_tasks := make([]Task, 0, len(tasks)-1)
@@ -84,7 +84,7 @@ func Mark(task_id int, status Status) error {
 
 	task := find(&tasks, task_id)
 	if task == nil {
-		return errors.New("There is no task with the id")
+		return errors.New("NO TASK WITH THE ID")
 	}
 
 	task.status = status
