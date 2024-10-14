@@ -77,6 +77,10 @@ func Delete(task_id int) error {
 		return err
 	}
 
+	if len(tasks) == 0 {
+		return errors.New("NO TASK WITH THE ID")
+	}
+
 	new_tasks := make(Tasks, 0, len(tasks)-1)
 	for i := range tasks {
 		if tasks[i].Id != task_id {
