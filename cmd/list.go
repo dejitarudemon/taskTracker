@@ -15,12 +15,21 @@ var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List all task",
 	Run: func(cmd *cobra.Command, args []string) {
-		tasks, err := crud.List(nil)
+		var status_func *string
+		status, _ := cmd.Flags().GetString("status")
+
+		if status == "" {
+			status_func = nil
+		} else {
+			status_func = &status
+		}
+
+		tasks, err := crud.List(status_func)
 		if err != nil {
 			fmt.Println(err)
 		} else {
 			for i, task := range tasks {
-				fmt.Printf("%d | ID: %d | DESC: %v | CREATED: %v | UPDATED: %v\n", i, task.Id, task.Description, task.CreatedAt, task.UpdatedAt)
+				fmt.Printf("%d | ID: %d | DESC: %v | STATUS: %v | CREATED: %v | UPDATED: %v\n", i, task.Id, task.Description, task.Status, task.CreatedAt, task.UpdatedAt)
 			}
 		}
 	},
@@ -28,14 +37,5 @@ var listCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(listCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	listCmd.Flags().String("status", "", "The task status")
 }
