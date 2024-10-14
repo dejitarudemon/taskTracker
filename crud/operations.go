@@ -97,9 +97,10 @@ func List(status *Status) ([]Task, error) {
 		return []Task{}, err
 	}
 
-	switch *status {
-	case Status(ToDo):
-
+	if status != nil {
+		return filter(&tasks, status), nil
+	} else {
+		return tasks, nil
 	}
 }
 
