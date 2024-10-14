@@ -8,11 +8,12 @@ import (
 	"errors"
 	"io"
 	"os"
+	"time"
 )
 
 const FILEDATA = "./tasks.json"
 
-func (task *Task) Add(descriptrion []byte) error {
+func Add(descriptrion []byte) error {
 	tasks, err := load(FILEDATA)
 	if err != nil {
 		return err
@@ -25,8 +26,15 @@ func (task *Task) Add(descriptrion []byte) error {
 		last_id = 0
 	}
 
-	task.id = last_id + 1
-	tasks = append(tasks, *task)
+	task := Task{
+		id:          last_id + 1,
+		description: descriptrion,
+		status:      Status(ToDo),
+		createdAt:   time.Now(),
+		updatedAt:   time.Now(),
+	}
+
+	tasks = append(tasks, task)
 
 	return dump(&tasks, FILEDATA)
 }
