@@ -21,7 +21,8 @@ func Init() error {
 	}
 
 	if errors.Is(err, os.ErrNotExist) {
-		_, err := os.Create(FILEDATA)
+		file, err := os.Create(FILEDATA)
+		file.Close()
 		return err
 	}
 
@@ -36,17 +37,17 @@ func Add(descriptrion string) error {
 
 	var last_id int
 	if len(tasks) > 0 {
-		last_id = tasks[len(tasks)-1].id
+		last_id = tasks[len(tasks)-1].Id
 	} else {
-		last_id = 1
+		last_id = 0
 	}
 
 	task := Task{
-		id:          last_id + 1,
-		description: descriptrion,
-		status:      Status(ToDo),
-		createdAt:   time.Now(),
-		updatedAt:   time.Now(),
+		Id:          last_id + 1,
+		Description: descriptrion,
+		Status:      ToDo,
+		CreatedAt:   time.Now().Format("2006-01-02 03:04:05"),
+		UpdatedAt:   time.Now().Format("2006-01-02 03:04:05"),
 	}
 
 	tasks = append(tasks, task)
@@ -65,8 +66,8 @@ func Update(task_id int, new_descriptrion string) error {
 		return errors.New("NO TASK WITH THE ID")
 	}
 
-	task.description = new_descriptrion
-	task.updatedAt = time.Now()
+	task.Description = new_descriptrion
+	task.UpdatedAt = time.Now().Format("2006-01-02 03:04:05")
 	return dump(&tasks, FILEDATA)
 }
 
@@ -81,9 +82,9 @@ func Delete(task_id int) error {
 		return errors.New("NO TASK WITH THE ID")
 	}
 
-	new_tasks := make([]Task, 0, len(tasks)-1)
+	new_tasks := make(Tasks, 0, len(tasks)-1)
 	for i := range tasks {
-		if tasks[i].id != task.id {
+		if tasks[i].Id != task.Id {
 			new_tasks = append(new_tasks, tasks[i])
 		}
 	}
@@ -91,7 +92,7 @@ func Delete(task_id int) error {
 	return dump(&new_tasks, FILEDATA)
 }
 
-func Mark(task_id int, status Status) error {
+func Mark(task_id int, status string) error {
 	tasks, err := load(FILEDATA)
 	if err != nil {
 		return err
@@ -102,14 +103,14 @@ func Mark(task_id int, status Status) error {
 		return errors.New("NO TASK WITH THE ID")
 	}
 
-	task.status = status
+	task.Status = status
 	return dump(&tasks, FILEDATA)
 }
 
-func List(status *Status) ([]Task, error) {
+func List(status *string) (Tasks, error) {
 	tasks, err := load(FILEDATA)
 	if err != nil {
-		return []Task{}, err
+		return Tasks{}, err
 	}
 
 	if status != nil {
@@ -119,63 +120,57 @@ func List(status *Status) ([]Task, error) {
 	}
 }
 
-func load(filepath string) ([]Task, error) {
+func load(filepath string) (Tasks, error) {
 	file, err := os.Open(filepath)
 	if err != nil {
-		return []Task{}, err
+		return Tasks{}, err
 	}
 	defer file.Close()
 
 	content, err := io.ReadAll(file)
 	if err != nil {
-		return []Task{}, err
+		return Tasks{}, err
 	}
 
-	if !json.Valid(content) {
-		return []Task{}, errors.New("NOT JSON-VALIDE")
+	if len(content) == 0 {
+		return Tasks{}, nil
 	}
 
-	var tasks []Task
+	var tasks Tasks
 
 	if err := json.Unmarshal(content, &tasks); err != nil {
-		return []Task{}, err
+		return Tasks{}, err
 	}
 
 	return tasks, nil
 }
 
-func dump(tasks *[]Task, filepath string) error {
-	file, err := os.Open(filepath)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	contentJsoned, err := json.Marshal(tasks)
+func dump(tasks *Tasks, filepath string) error {
+	contentJsoned, err := json.MarshalIndent(*tasks, "\t", "\n")
 	if err != nil {
 		return err
 	}
 
-	if _, err := file.Write(contentJsoned); err != nil {
+	if err := os.WriteFile(filepath, contentJsoned, 0664); err != nil {
 		return err
 	}
 	return nil
 }
 
-func find(tasks *[]Task, task_id int) *Task {
+func find(tasks *Tasks, task_id int) *Task {
 	for _, task := range *tasks {
-		if task.id == task_id {
+		if task.Id == task_id {
 			return &task
 		}
 	}
 	return nil
 }
 
-func filter(tasks *[]Task, status *Status) []Task {
-	result := make([]Task, 0, 1)
+func filter(tasks *Tasks, status *string) Tasks {
+	result := make(Tasks, 0, 1)
 
 	for _, task := range *tasks {
-		if task.status == *status {
+		if task.Status == *status {
 			result = append(result, task)
 		}
 	}
