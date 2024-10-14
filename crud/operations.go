@@ -23,7 +23,7 @@ func Add(descriptrion []byte) error {
 	if len(tasks) > 0 {
 		last_id = tasks[len(tasks)-1].id
 	} else {
-		last_id = 0
+		last_id = 1
 	}
 
 	task := Task{
@@ -91,7 +91,17 @@ func Mark(task_id int, status Status) error {
 	return dump(&tasks, FILEDATA)
 }
 
-func List(tasks *[]Task, status Status) error {}
+func List(status *Status) ([]Task, error) {
+	tasks, err := load(FILEDATA)
+	if err != nil {
+		return []Task{}, err
+	}
+
+	switch *status {
+	case Status(ToDo):
+
+	}
+}
 
 func load(filepath string) ([]Task, error) {
 	file, err := os.Open(FILEDATA)
@@ -143,4 +153,16 @@ func find(tasks *[]Task, task_id int) *Task {
 		}
 	}
 	return nil
+}
+
+func filter(tasks *[]Task, status *Status) []Task {
+	result := make([]Task, 0, 1)
+
+	for _, task := range *tasks {
+		if task.status == *status {
+			result = append(result, task)
+		}
+	}
+
+	return result
 }

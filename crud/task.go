@@ -13,7 +13,7 @@ type Task struct {
 	updatedAt   time.Time
 }
 
-type Status []byte
+type Status string
 
 const (
 	Done       = "done"
