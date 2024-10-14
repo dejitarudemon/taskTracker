@@ -46,8 +46,8 @@ func Add(descriptrion string) error {
 		Id:          last_id + 1,
 		Description: descriptrion,
 		Status:      ToDo,
-		CreatedAt:   time.Now().Format("2006-01-02 03:04:05"),
-		UpdatedAt:   time.Now().Format("2006-01-02 03:04:05"),
+		CreatedAt:   time.Now().Format("2006-01-02 15:04:05"),
+		UpdatedAt:   time.Now().Format("2006-01-02 15:04:05"),
 	}
 
 	tasks = append(tasks, task)
@@ -64,7 +64,7 @@ func Update(task_id int, new_descriptrion string) error {
 	for i := range tasks {
 		if tasks[i].Id == task_id {
 			tasks[i].Description = new_descriptrion
-			tasks[i].UpdatedAt = time.Now().Format("2006-01-02 03:04:05")
+			tasks[i].UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
 			return dump(&tasks, FILEDATA)
 		}
 	}
@@ -102,7 +102,7 @@ func Mark(task_id int, status string) error {
 
 	for i := range tasks {
 		if tasks[i].Id == task_id {
-			tasks[i].UpdatedAt = time.Now().Format("2006-01-02 03:04:05")
+			tasks[i].UpdatedAt = time.Now().Format("2006-01-02 15:04:05")
 			tasks[i].Status = status
 			return dump(&tasks, FILEDATA)
 		}
